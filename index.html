@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>For You ❤️</title>
+  <style>
+    :root{
+      --bg1:#ffdde1;
+      --bg2:#ee9ca7;
+      --card:#ffffffcc;
+      --text:#1f1f1f;
+      --accent:#ff2d55;
+      --shadow: 0 18px 50px rgba(0,0,0,.18);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      color:var(--text);
+      background: radial-gradient(circle at 20% 20%, var(--bg1), var(--bg2));
+      overflow:hidden;
+    }
+
+    /* Floating hearts */
+    .heart{
+      position:fixed;
+      bottom:-40px;
+      width:18px;
+      height:18px;
+      transform: rotate(45deg);
+      background: rgba(255, 45, 85, 0.55);
+      animation: floatUp linear forwards;
+      filter: blur(.2px);
+    }
+    .heart::before, .heart::after{
+      content:"";
+      position:absolute;
+      width:18px;
+      height:18px;
+      border-radius:50%;
+      background: inherit;
+    }
+    .heart::before{ left:-9px; top:0; }
+    .heart::after{ left:0; top:-9px; }
+    @keyframes floatUp{
+      from{ transform: translateY(0) rotate(45deg); opacity:.85; }
+      to{ transform: translateY(-120vh) rotate(45deg); opacity:0; }
+    }
+
+    /* Card */
+    .wrap{
+      width:min(920px, 92vw);
+      padding:18px;
+      position:relative;
+      z-index:2;
+    }
+    .card{
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:18px;
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.55);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius:22px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    @media (max-width: 860px){
+      .card{ grid-template-columns: 1fr; }
+    }
+    .left{
+      padding:26px 26px 22px;
+    }
+    .right{
+      padding:26px;
+      background: linear-gradient(135deg, rgba(255,255,255,.55), rgba(255,255,255,.15));
+      border-left: 1px solid rgba(255,255,255,.4);
+    }
+    @media (max-width: 860px){
+      .right{ border-left:none; border-top: 1px solid rgba(255,255,255,.4); }
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 14px;
+      border-radius:999px;
+      background: rgba(255,255,255,.65);
+      border:1px solid rgba(255,255,255,.55);
+      font-weight:600;
+      letter-spacing:.2px;
+    }
+    .dot{
+      width:10px;height:10px;border-radius:50%;
+      background: var(--accent);
+      box-shadow: 0 0 18px rgba(255,45,85,.45);
+    }
+    h1{
+      margin:14px 0 10px;
+      font-size: clamp(28px, 3.6vw, 42px);
+      line-height:1.1;
+    }
+    .sub{
+      font-size: 15.5px;
+      line-height:1.65;
+      opacity:.92;
+      margin: 0 0 18px;
+    }
+
+    /* Typing */
+    .typebox{
+      margin-top: 12px;
+      padding:16px 16px;
+      border-radius:16px;
+      background: rgba(255,255,255,.55);
+      border: 1px solid rgba(255,255,255,.55);
+    }
+    .typing{
+      font-size: 18px;
+      line-height:1.6;
+      min-height: 92px;
+      white-space: pre-wrap;
+    }
+    .cursor{
+      display:inline-block;
+      width:10px;
+      margin-left:2px;
+      animation: blink .9s infinite;
+      color: var(--accent);
+      font-weight:700;
+    }
+    @keyframes blink { 50%{opacity:0} }
+
+    /* Reveal section */
+    .reveal{
+      margin-top:14px;
+      display:none;
+      padding:16px;
+      border-radius:16px;
+      background: rgba(255,255,255,.55);
+      border: 1px solid rgba(255,255,255,.55);
+    }
+    .reveal h2{
+      margin:0 0 10px;
+      color: var(--accent);
+      font-size: 20px;
+    }
+    .reveal p{
+      margin:0;
+      font-size: 16px;
+      line-height:1.65;
+    }
+
+    /* Buttons */
+    .btnrow{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:14px;
+    }
+    button{
+      border:0;
+      padding:12px 14px;
+      border-radius:14px;
+      font-weight:700;
+      cursor:pointer;
+      transition: transform .08s ease, box-shadow .2s ease, opacity .2s;
+      user-select:none;
+    }
+    button:active{ transform: translateY(1px) scale(.99); }
+    .primary{
+      background: var(--accent);
+      color:white;
+      box-shadow: 0 12px 24px rgba(255,45,85,.25);
+    }
+    .ghost{
+      background: rgba(255,255,255,.7);
+      border:1px solid rgba(255,255,255,.65);
+    }
+    .smallnote{
+      margin-top:10px;
+      font-size: 12.5px;
+      opacity:.8;
+    }
+
+    /* Photo + side content */
+    .photo{
+      width:100%;
+      aspect-ratio: 4/5;
+      border-radius:18px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.6);
+      box-shadow: 0 14px 34px rgba(0,0,0,.12);
+      position:relative;
+      background: linear-gradient(135deg, rgba(255,45,85,.22), rgba(255,255,255,.35));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:18px;
+    }
+    .photo img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:none; /* shown when you add an image */
+    }
+    .photo .placeholder{
+      font-weight:700;
+      line-height:1.45;
+    }
+    .photo .placeholder span{
+      display:block;
+      font-weight:600;
+      opacity:.85;
+      margin-top:6px;
+      font-size: 13px;
+    }
+    .mini{
+      margin-top:14px;
+      padding:14px;
+      border-radius:16px;
+      background: rgba(255,255,255,.55);
+      border: 1px solid rgba(255,255,255,.55);
+    }
+    .mini b{ color: var(--accent); }
+    .quote{
+      margin:0;
+      font-size: 15px;
+      line-height:1.6;
+      opacity:.95;
+    }
+
+    /* Music toggle */
+    .music{
+      margin-top:12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:12px 14px;
+      border-radius:16px;
+      background: rgba(255,255,255,.55);
+      border: 1px solid rgba(255,255,255,.55);
+    }
+    .toggle{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      font-weight:700;
+    }
+    .pill{
+      width:52px;height:30px;
+      border-radius:999px;
+      background: rgba(0,0,0,.12);
+      position:relative;
+      cursor:pointer;
+      flex: 0 0 auto;
+      border:1px solid rgba(255,255,255,.55);
+    }
+    .knob{
+      width:26px;height:26px;border-radius:50%;
+      background:white;
+      position:absolute; top:1px; left:1px;
+      transition: left .18s ease;
+      box-shadow: 0 10px 16px rgba(0,0,0,.15);
+    }
+    .pill.on{ background: rgba(255,45,85,.25); }
+    .pill.on .knob{ left:25px; }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="left">
+        <div class="badge"><span class="dot"></span> A little website made just for you</div>
+
+        <h1>Happy Valentine’s Day, Chelsea ❤️</h1>
+
+        <p class="sub">
+          I wanted to do something small, personal, and unforgettable.
+          So I turned my feelings into a tiny page you can open anytime.
+        </p>
+
+        <div class="typebox">
+          <div class="typing" id="typing"></div><span class="cursor">|</span>
+        </div>
+
+        <div class="btnrow">
+          <button class="primary" id="revealBtn">Tap for the secret message 💌</button>
+          <button class="ghost" id="heartsBtn">Make it rain hearts 💖</button>
+          <button class="ghost" id="copyBtn">Copy this link 🔗</button>
+        </div>
+
+        <div class="reveal" id="revealBox">
+          <h2>Okay… here it is.</h2>
+          <p>
+            I don’t just like you — I feel lucky to have you.<br><br>
+            You bring peace to my mind, warmth to my days, and meaning to my life.<br><br>
+            If I had to choose one person to do life with, I’d choose you — again and again.<br><br>
+            Will you be my Valentine? 💕
+          </p>
+        </div>
+
+        <div class="smallnote">
+          Tip: If you want to add your photo together, scroll to the right section and follow the 10-second step.
+        </div>
+      </div>
+
+      <div class="right">
+        <div class="photo" id="photoBox">
+          <!-- OPTIONAL: Add your image file as "photo.jpg" and it will show automatically -->
+          <img id="photo" src="photo.jpg" alt="Us ❤️" />
+          <div class="placeholder" id="placeholder">
+            Add your photo together 📸
+            <span>Upload a picture named <b>photo.jpg</b> in the same folder as this page.</span>
+          </div>
+        </div>
+
+        <div class="mini">
+          <p class="quote">
+            <b>Reason #1 I love you:</b> you make “home” feel like a person, not a place.
+          </p>
+        </div>
+
+        <div class="mini">
+          <p class="quote">
+            <b>Reason #2:</b> life feels lighter when you’re around — like the best kind of calm.
+          </p>
+        </div>
+
+        <div class="music">
+          <div class="toggle">
+            🎶 Soft background music
+            <span style="font-weight:600;opacity:.8;font-size:12.5px">(optional)</span>
+          </div>
+          <div class="pill" id="musicToggle" title="Tap to toggle music">
+            <div class="knob"></div>
+          </div>
+        </div>
+
+        <!-- OPTIONAL MUSIC:
+             1) Upload an mp3 file named "song.mp3" next to index.html
+             2) Toggle music above to play/pause
+        -->
+        <audio id="audio" loop>
+          <source src="song.mp3" type="audio/mpeg" />
+        </audio>
+
+        <div class="smallnote">
+          Want it even more personal? Replace “Chelsea” at the top, and edit the “Reason #1/#2” lines.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ---- Typing effect (edit these lines to personalize) ----
+    const lines = [
+      "Hey Chelsea… ❤️\n",
+      "If you’re reading this, it means I’m thinking about you (again).\n\n",
+      "You make my days better in ways I can’t fully explain.\n",
+      "Your smile feels like a reset button for my whole world.\n\n",
+      "Today I just want to say:\n",
+      "I’m grateful for you. I choose you. I adore you.\n"
+    ];
+
+    const typingEl = document.getElementById("typing");
+    let i = 0, j = 0;
+
+    function typeNext(){
+      if(i >= lines.length) return;
+      const current = lines[i];
+      typingEl.textContent += current[j];
+      j++;
+      if(j >= current.length){ i++; j = 0; }
+      setTimeout(typeNext, 28);
+    }
+    typeNext();
+
+    // ---- Reveal ----
+    const revealBtn = document.getElementById("revealBtn");
+    const revealBox = document.getElementById("revealBox");
+    revealBtn.addEventListener("click", () => {
+      revealBox.style.display = (revealBox.style.display === "block") ? "none" : "block";
+      burstHearts(18);
+    });
+
+    // ---- Heart rain ----
+    const heartsBtn = document.getElementById("heartsBtn");
+    heartsBtn.addEventListener("click", () => burstHearts(35));
+
+    function burstHearts(count){
+      for(let k=0; k<count; k++){
+        const h = document.createElement("div");
+        h.className = "heart";
+        const size = 10 + Math.random()*18;
+        h.style.width = size + "px";
+        h.style.height = size + "px";
+        h.style.left = (Math.random()*100) + "vw";
+        h.style.animationDuration = (4 + Math.random()*4) + "s";
+        h.style.opacity = 0.55 + Math.random()*0.35;
+        document.body.appendChild(h);
+        setTimeout(() => h.remove(), 9000);
+      }
+    }
+
+    // ambient hearts, slow
+    setInterval(() => {
+      const chance = Math.random();
+      if(chance < 0.55) burstHearts(2);
+    }, 600);
+
+    // ---- Photo auto show if exists ----
+    const img = document.getElementById("photo");
+    const placeholder = document.getElementById("placeholder");
+    img.addEventListener("load", () => {
+      img.style.display = "block";
+      placeholder.style.display = "none";
+    });
+    img.addEventListener("error", () => {
+      img.style.display = "none";
+      placeholder.style.display = "block";
+    });
+
+    // ---- Copy link ----
+    const copyBtn = document.getElementById("copyBtn");
+    copyBtn.addEventListener("click", async () => {
+      try{
+        await navigator.clipboard.writeText(window.location.href);
+        copyBtn.textContent = "Copied! ✅";
+        setTimeout(() => copyBtn.textContent = "Copy this link 🔗", 1400);
+      }catch(e){
+        alert("Copy failed. Just copy the link from the address bar 🙂");
+      }
+    });
+
+    // ---- Music toggle ----
+    const toggle = document.getElementById("musicToggle");
+    const audio = document.getElementById("audio");
+    let playing = false;
+
+    toggle.addEventListener("click", async () => {
+      playing = !playing;
+      toggle.classList.toggle("on", playing);
+
+      try{
+        if(playing){
+          await audio.play();
+        }else{
+          audio.pause();
+        }
+      }catch(e){
+        // Some phones require user interaction: toggle click counts, so usually fine.
+        playing = false;
+        toggle.classList.remove("on");
+        alert("If music doesn’t play, upload a file named song.mp3 next to index.html 🙂");
+      }
+    });
+  </script>
+</body>
+</html>
